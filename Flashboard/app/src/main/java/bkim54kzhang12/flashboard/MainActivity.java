@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
@@ -96,18 +97,21 @@ public class MainActivity extends ActionBarActivity {
 
 
     public static class ReviewFragment extends Fragment {
-        Spinner subjectSpinner;
+        private Spinner subjectSpinner;
+        private View myFragmentView;
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             // Inflate the layout resource that'll be returned
-            return inflater.inflate(R.layout.fragment_review, container, false);
+            myFragmentView = inflater.inflate(R.layout.fragment_review, container, false);
+            return myFragmentView;
         }
 
-        /*
+
         @Override
         public void onResume() {
-            subjectSpinner = (Spinner) getActivity().findViewById(R.id.subject_spinner);
+            super.onResume();
+            subjectSpinner = (Spinner) myFragmentView.findViewById(R.id.review_subject_spinner);
             // Create an ArrayAdapter using the string array and a default spinner layout
             ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this.getActivity(),
                     R.array.subjects_array, android.R.layout.simple_spinner_item);
@@ -115,14 +119,37 @@ public class MainActivity extends ActionBarActivity {
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             // Apply the adapter to the spinner
             subjectSpinner.setAdapter(adapter);
-        }*/
+        }
+
+        /** Called when the user clicks the Start button */
+        public void startReview(View view) {
+            Intent intent = new Intent(this.getActivity(), ReviewActivity.class);
+            startActivity(intent);
+        }
     }
 
     public static class InsertFragment extends Fragment {
+        private Spinner subjectSpinner;
+        private View myFragmentView;
+
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             // Inflate the layout resource that'll be returned
-            return inflater.inflate(R.layout.fragment_insert, container, false);
+            myFragmentView =  inflater.inflate(R.layout.fragment_insert, container, false);
+            return myFragmentView;
+        }
+
+        @Override
+        public void onResume() {
+            super.onResume();
+            subjectSpinner = (Spinner) myFragmentView.findViewById(R.id.insert_subject_spinner);
+            // Create an ArrayAdapter using the string array and a default spinner layout
+            ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this.getActivity(),
+                    R.array.subjects_array, android.R.layout.simple_spinner_item);
+            // Specify the layout to use when the list of choices appears
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            // Apply the adapter to the spinner
+            subjectSpinner.setAdapter(adapter);
         }
     }
 
