@@ -2,7 +2,20 @@
 <resources>
 
     <string name="app_name">Flashboard</string>
-    <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-
+    <string name="review">Review</string>
+    <string name="review_u"><u>Review</u></string>
+    <string name="insert_cards">Insert cards</string>
+    <string name="insert_cards_u"><u>Insert cards</u></string>
+    <string name="randomize">Randomize!</string>
+    <string name="start">Start!</string>
+    <string name="add">+</string>
+    <string name="question">Question...</string>
+    <string name="answer">Answer...</string>
+    <string name="insert">Insert!</string>
+    <string-array name="subjects_array">
+        <item>Math</item>
+        <item>English</item>
+        <item>Science</item>
+    </string-array>
 </resources>

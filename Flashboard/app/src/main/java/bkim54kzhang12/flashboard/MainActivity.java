@@ -1,36 +1,44 @@
 package bkim54kzhang12.flashboard;
 
 import android.app.ActionBar;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
-
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.Spinner;
+import android.widget.Toast;
 
 public class MainActivity extends ActionBarActivity {
-    ActionBar actionBar;
-    CustomPagerAdapter mCustomPagerAdapter;
-    ViewPager mViewPager;
+    private FragmentManager fragmentManager;
+    private FragmentTransaction fragmentTransaction;
+    private Button reviewButton;
+    private Button insertButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        reviewButton = (Button) findViewById(R.id.reviewButton);
+        insertButton = (Button) findViewById(R.id.insertButton);
+        //When first created load the review fragment and disable the review button so cant click
+        reviewButton.setEnabled(false);
+        insertButton.setEnabled(true);
 
+        fragmentManager = getFragmentManager();
+        fragmentTransaction = fragmentManager.beginTransaction();
 
-        mCustomPagerAdapter = new CustomPagerAdapter(getSupportFragmentManager(), this);
-
-        mViewPager = (ViewPager) findViewById(R.id.pager);
-        mViewPager.setAdapter(mCustomPagerAdapter);
+        ReviewFragment reviewFrag = new ReviewFragment();
+        fragmentTransaction.add(R.id.fragment_container, reviewFrag);
+        fragmentTransaction.commit();
     }
 
 
@@ -56,57 +64,65 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private class CustomPagerAdapter extends FragmentPagerAdapter {
-        Context mContext;
-
-        public CustomPagerAdapter(FragmentManager fm, Context context) {
-            super(fm);
-            mContext = context;
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-
-            // Create fragment object
-            Fragment fragment = new DemoFragment();
-
-            // Attach some data to the fragment
-            // that we'll use to populate our fragment layouts
-            Bundle args = new Bundle();
-            args.putInt("page_position", position + 1);
-
-            // Set the arguments on the fragment
-            // that will be fetched in the
-            // DemoFragment@onCreateView
-            fragment.setArguments(args);
-
-            return fragment;
-        }
-
-        @Override
-        public int getCount() {
-            return 2;
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return "Page " + (position + 1);
-        }
+    public void launchReviewFragment(View view) {
+        Toast toast = Toast.makeText(getApplicationContext(), "Review", Toast.LENGTH_SHORT);
+        toast.show();
+        reviewButton.setEnabled(false);
+        insertButton.setEnabled(true);
+        reviewButton.setText(R.string.review_u);
+        insertButton.setText(R.string.insert_cards);
+        fragmentManager.popBackStack();
     }
 
-    public static class DemoFragment extends Fragment {
+    public void launchInsertFragment(View view) {
+        Toast toast = Toast.makeText(getApplicationContext(), "Insert", Toast.LENGTH_SHORT);
+        toast.show();
+        reviewButton.setEnabled(true);
+        insertButton.setEnabled(false);
+        reviewButton.setText(R.string.review);
+        insertButton.setText(R.string.insert_cards_u);
+        // Create new fragment and transaction
+        InsertFragment insertFragment = new InsertFragment();
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+
+        // Replace whatever is in the fragment_container view with this fragment,
+        // and add the transaction to the back stack
+        transaction.replace(R.id.fragment_container, insertFragment);
+        transaction.addToBackStack(null);
+
+        // Commit the transaction
+        transaction.commit();
+    }
+
+
+    public static class ReviewFragment extends Fragment {
+        Spinner subjectSpinner;
+
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             // Inflate the layout resource that'll be returned
-            View rootView = inflater.inflate(R.layout.fragment_demo, container, false);
+            return inflater.inflate(R.layout.fragment_review, container, false);
+        }
 
-            // Get the arguments that was supplied when
-            // the fragment was instantiated in the
-            // CustomPagerAdapter
-            Bundle args = getArguments();
-            ((TextView) rootView.findViewById(R.id.textView)).setText("Page " + args.getInt("page_position"));
+        /*
+        @Override
+        public void onResume() {
+            subjectSpinner = (Spinner) getActivity().findViewById(R.id.subject_spinner);
+            // Create an ArrayAdapter using the string array and a default spinner layout
+            ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this.getActivity(),
+                    R.array.subjects_array, android.R.layout.simple_spinner_item);
+            // Specify the layout to use when the list of choices appears
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            // Apply the adapter to the spinner
+            subjectSpinner.setAdapter(adapter);
+        }*/
+    }
 
-            return rootView;
+    public static class InsertFragment extends Fragment {
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+            // Inflate the layout resource that'll be returned
+            return inflater.inflate(R.layout.fragment_insert, container, false);
         }
     }
 
