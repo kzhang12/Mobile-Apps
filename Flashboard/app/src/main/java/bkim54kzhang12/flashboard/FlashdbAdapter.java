@@ -57,7 +57,7 @@ public class FlashdbAdapter {
         return db.insert(FLASH_TABLE, null, cvalues);
     }
 
-    public CardItem getCourseItem(long ri) throws SQLException {
+    public CardItem getCardItem(long ri) throws SQLException {
         Cursor cursor = db.query(true, FLASH_TABLE, FLASH_COLS, FLASH_ID+"="+ri, null, null, null, null, null);
         if ((cursor.getCount() == 0) || !cursor.moveToFirst()) {
             throw new SQLException("No course items found for row: " + ri);

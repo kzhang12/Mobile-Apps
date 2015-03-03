@@ -4,16 +4,32 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 
 public class ReviewActivity extends ActionBarActivity {
+
+    protected static FlashdbAdapter dbAdapter;
+    TextView textView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_review);
+
+        //setup DB
+        dbAdapter = new FlashdbAdapter(this);
+        dbAdapter.open();
+
+        CardItem card = dbAdapter.getCardItem(1);
+        
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        dbAdapter.close();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

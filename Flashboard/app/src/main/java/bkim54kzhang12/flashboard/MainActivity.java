@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -24,12 +25,19 @@ public class MainActivity extends ActionBarActivity {
     private Button reviewButton;
     private Button insertButton;
 
+    protected static FlashdbAdapter dbAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         reviewButton = (Button) findViewById(R.id.reviewButton);
         insertButton = (Button) findViewById(R.id.insertButton);
+
+        //setup DB
+        dbAdapter = new FlashdbAdapter(this);
+        dbAdapter.open();
+
         //When first created load the review fragment and disable the review button so cant click
         reviewButton.setEnabled(false);
         insertButton.setEnabled(true);
@@ -40,8 +48,15 @@ public class MainActivity extends ActionBarActivity {
         ReviewFragment reviewFrag = new ReviewFragment();
         fragmentTransaction.add(R.id.fragment_container, reviewFrag);
         fragmentTransaction.commit();
+
+
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        dbAdapter.close();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -66,8 +81,6 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public void launchReviewFragment(View view) {
-        Toast toast = Toast.makeText(getApplicationContext(), "Review", Toast.LENGTH_SHORT);
-        toast.show();
         reviewButton.setEnabled(false);
         insertButton.setEnabled(true);
         reviewButton.setText(R.string.review_u);
@@ -119,17 +132,15 @@ public class MainActivity extends ActionBarActivity {
             subjectSpinner.setAdapter(adapter);
 
             startButton = (Button) myFragmentView.findViewById(R.id.start_button);
-            startButton.setOnClickListener(startListener);
+            startButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(getActivity(), ReviewActivity.class);
+                    startActivity(intent);
+                }
+            });
             return myFragmentView;
         }
-
-        private View.OnClickListener startListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        };
-
 
         @Override
         public void onResume() {
@@ -141,6 +152,9 @@ public class MainActivity extends ActionBarActivity {
     public static class InsertFragment extends Fragment {
         private Spinner subjectSpinner;
         private View myFragmentView;
+        private EditText questionEditText;
+        private EditText answerEditText;
+        private Button insertButton;
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -154,6 +168,21 @@ public class MainActivity extends ActionBarActivity {
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             // Apply the adapter to the spinner
             subjectSpinner.setAdapter(adapter);
+
+            questionEditText = (EditText) myFragmentView.findViewById(R.id.question_editText);
+            answerEditText = (EditText) myFragmentView.findViewById(R.id.answer_editText);
+            insertButton = (Button) myFragmentView.findViewById(R.id.insert_button);
+
+            insertButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String question = questionEditText.getText().toString();
+                    String answer = answerEditText.getText().toString();
+                    dbAdapter.insertCard(new CardItem("science", question, answer));
+                    Toast toast = Toast.makeText(getActivity(), "Added New Card!", Toast.LENGTH_SHORT);
+                    toast.show();
+                }
+            });
             return myFragmentView;
         }
 
