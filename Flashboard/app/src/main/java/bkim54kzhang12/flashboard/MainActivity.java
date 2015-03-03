@@ -19,6 +19,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+
 public class MainActivity extends ActionBarActivity {
     private FragmentManager fragmentManager;
     private FragmentTransaction fragmentTransaction;
