@@ -72,6 +72,8 @@ public class MainActivity extends ActionBarActivity {
         insertButton.setEnabled(true);
         reviewButton.setText(R.string.review_u);
         insertButton.setText(R.string.insert_cards);
+        reviewButton.setBackgroundColor(getResources().getColor(R.color.button_enabled));
+        insertButton.setBackgroundColor(getResources().getColor(R.color.button_disabled));
         fragmentManager.popBackStack();
     }
 
@@ -82,6 +84,8 @@ public class MainActivity extends ActionBarActivity {
         insertButton.setEnabled(false);
         reviewButton.setText(R.string.review);
         insertButton.setText(R.string.insert_cards_u);
+        reviewButton.setBackgroundColor(getResources().getColor(R.color.button_disabled));
+        insertButton.setBackgroundColor(getResources().getColor(R.color.button_enabled));
         // Create new fragment and transaction
         InsertFragment insertFragment = new InsertFragment();
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
@@ -99,18 +103,12 @@ public class MainActivity extends ActionBarActivity {
     public static class ReviewFragment extends Fragment {
         private Spinner subjectSpinner;
         private View myFragmentView;
+        private Button startButton;
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             // Inflate the layout resource that'll be returned
             myFragmentView = inflater.inflate(R.layout.fragment_review, container, false);
-            return myFragmentView;
-        }
-
-
-        @Override
-        public void onResume() {
-            super.onResume();
             subjectSpinner = (Spinner) myFragmentView.findViewById(R.id.review_subject_spinner);
             // Create an ArrayAdapter using the string array and a default spinner layout
             ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this.getActivity(),
@@ -119,13 +117,25 @@ public class MainActivity extends ActionBarActivity {
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             // Apply the adapter to the spinner
             subjectSpinner.setAdapter(adapter);
+
+            startButton = (Button) myFragmentView.findViewById(R.id.start_button);
+            startButton.setOnClickListener(startListener);
+            return myFragmentView;
         }
 
-        /** Called when the user clicks the Start button */
-        public void startReview(View view) {
-            Intent intent = new Intent(this.getActivity(), ReviewActivity.class);
-            startActivity(intent);
+        private View.OnClickListener startListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        };
+
+
+        @Override
+        public void onResume() {
+            super.onResume();
         }
+
     }
 
     public static class InsertFragment extends Fragment {
@@ -136,12 +146,6 @@ public class MainActivity extends ActionBarActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             // Inflate the layout resource that'll be returned
             myFragmentView =  inflater.inflate(R.layout.fragment_insert, container, false);
-            return myFragmentView;
-        }
-
-        @Override
-        public void onResume() {
-            super.onResume();
             subjectSpinner = (Spinner) myFragmentView.findViewById(R.id.insert_subject_spinner);
             // Create an ArrayAdapter using the string array and a default spinner layout
             ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this.getActivity(),
@@ -150,6 +154,12 @@ public class MainActivity extends ActionBarActivity {
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             // Apply the adapter to the spinner
             subjectSpinner.setAdapter(adapter);
+            return myFragmentView;
+        }
+
+        @Override
+        public void onResume() {
+            super.onResume();
         }
     }
 

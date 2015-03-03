@@ -9,16 +9,16 @@
         android:layout_gravity="center">
         <Button
             android:id="@+id/reviewButton"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/review_u"
             android:textColor="#ffffff"
-            android:background="#4c4c4c4c"
+            android:background="#828282"
             android:onClick="launchReviewFragment"/>
         <Button
             android:id="@+id/insertButton"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/insert_cards"
