@@ -1,10 +1,12 @@
 package bkim54kzhang12.flashboard;
 
 import android.app.ActionBar;
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -156,11 +158,15 @@ public class MainActivity extends ActionBarActivity {
         private EditText questionEditText;
         private EditText answerEditText;
         private Button insertButton;
+        private Button subjectButton;
+        private View subjectView;
+        private EditText subjectEditText;
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             // Inflate the layout resource that'll be returned
             myFragmentView =  inflater.inflate(R.layout.fragment_insert, container, false);
+            subjectView =  inflater.inflate(R.layout.subject_alert, container, false);
             subjectSpinner = (Spinner) myFragmentView.findViewById(R.id.insert_subject_spinner);
             // Create an ArrayAdapter using the string array and a default spinner layout
             ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this.getActivity(),
@@ -173,6 +179,8 @@ public class MainActivity extends ActionBarActivity {
             questionEditText = (EditText) myFragmentView.findViewById(R.id.question_editText);
             answerEditText = (EditText) myFragmentView.findViewById(R.id.answer_editText);
             insertButton = (Button) myFragmentView.findViewById(R.id.insert_button);
+            subjectButton = (Button) myFragmentView.findViewById(R.id.add_subject_button);
+            subjectEditText= (EditText) subjectView.findViewById(R.id.subject_editText);
 
             insertButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -184,6 +192,34 @@ public class MainActivity extends ActionBarActivity {
                     toast.show();
                 }
             });
+
+            subjectButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //Make a builder for the alert dialog
+                    AlertDialog.Builder mBuilder = new AlertDialog.Builder(getActivity());
+                    mBuilder.setTitle("Add a new subject");
+                    mBuilder.setView(subjectView);
+                    //Set the positive button listener for the alert dialog
+                    mBuilder.setPositiveButton("Enter", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            String newSubject = subjectEditText.getText().toString();
+
+                            //TODO: Need to add new subject to the database
+
+                            //TODO: Need to notify spinner adapter that the data set has changed / repopulate the spinner
+
+                        }
+                    });
+                    mBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            //cancel alert
+                        }
+                    });
+                    mBuilder.show();
+                }
+            });
+
             return myFragmentView;
         }
 
