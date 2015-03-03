@@ -94,8 +94,6 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public void launchInsertFragment(View view) {
-        Toast toast = Toast.makeText(getApplicationContext(), "Insert", Toast.LENGTH_SHORT);
-        toast.show();
         reviewButton.setEnabled(true);
         insertButton.setEnabled(false);
         reviewButton.setText(R.string.review);
