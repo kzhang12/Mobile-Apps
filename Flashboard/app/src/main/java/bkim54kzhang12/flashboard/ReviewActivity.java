@@ -21,7 +21,11 @@ public class ReviewActivity extends ActionBarActivity {
         dbAdapter = new FlashdbAdapter(this);
         dbAdapter.open();
 
-        CardItem card = dbAdapter.getCardItem(1);
+        textView = (TextView) findViewById(R.id.review_textView);
+
+        CardItem card = dbAdapter.getCardItem(2);
+        String question = card.getQuestion();
+        textView.setText(question);
         
     }
 
