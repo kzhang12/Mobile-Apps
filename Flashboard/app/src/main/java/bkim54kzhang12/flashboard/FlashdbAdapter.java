@@ -9,6 +9,9 @@ import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Kevin on 3/2/2015.
  */
@@ -64,6 +67,38 @@ public class FlashdbAdapter {
         // must use column indices to get column values
         int whatIndex = cursor.getColumnIndex(FLASH_QUESTION);
         CardItem result = new CardItem(cursor.getString(whatIndex), cursor.getString(2), cursor.getString(3));
+        return result;
+    }
+
+    public int getNumCards() {
+        Cursor cursor = db.query(true, FLASH_TABLE, FLASH_COLS, FLASH_ID, null, null, null, null, null);
+        return cursor.getCount();
+    }
+
+    public boolean removeCard(long ri) {
+        return db.delete(FLASH_TABLE, FLASH_ID+"="+ri, null) > 0;
+    }
+
+    public List<String> getSubjects() {
+        Cursor cursor = db.query(true, FLASH_TABLE, FLASH_COLS, null, null, null, null, null, null);
+        List<String> result = new ArrayList<String>();
+        /*while (!cursor.isAfterLast()) {
+            int col = cursor.getColumnIndex(FLASH_SUBJECT);
+            Log.w("col", Integer.toString(col));
+            String temp = cursor.getString(col);
+            Log.w("string", temp);
+            result.add(temp);
+            cursor.moveToNext();
+        }*/
+        cursor.moveToFirst();
+        for (int i = 0; i < cursor.getCount(); i++) {
+            String col = cursor.getString(1);
+            if (!result.contains(col)) {
+                result.add(col);
+            }
+            cursor.moveToNext();
+        }
+        cursor.close();
         return result;
     }
 

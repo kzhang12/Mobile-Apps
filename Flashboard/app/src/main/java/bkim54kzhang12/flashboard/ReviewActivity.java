@@ -9,8 +9,12 @@ import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.List;
 
 
 public class ReviewActivity extends ActionBarActivity implements
@@ -19,6 +23,10 @@ public class ReviewActivity extends ActionBarActivity implements
 
     protected static FlashdbAdapter dbAdapter;
     TextView textView;
+    private CardItem card;
+    private int counter;
+    private int max;
+    private CheckBox randomizeCheckbox;
 
     private static final String DEBUG_TAG = "Gestures";
     private GestureDetectorCompat mDetector;
@@ -27,6 +35,8 @@ public class ReviewActivity extends ActionBarActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_review);
+
+        randomizeCheckbox = (CheckBox) findViewById(R.id.random_checkbox);
 
         // Instantiate the gesture detector with the
         // application context and an implementation of
@@ -39,13 +49,16 @@ public class ReviewActivity extends ActionBarActivity implements
         //setup DB
         dbAdapter = new FlashdbAdapter(this);
         dbAdapter.open();
+        counter = 1;
 
         textView = (TextView) findViewById(R.id.review_textView);
 
-
-        CardItem card = dbAdapter.getCardItem(2);
+        card = dbAdapter.getCardItem(counter);
         String question = card.getQuestion();
         textView.setText(question);
+
+        List<String> temp = dbAdapter.getSubjects();
+        textView.setText(temp.toString());
 
     }
 
@@ -88,6 +101,8 @@ public class ReviewActivity extends ActionBarActivity implements
     public boolean onSingleTapConfirmed(MotionEvent e) {
         Toast toast = Toast.makeText(getApplicationContext(), "Tapped", Toast.LENGTH_SHORT);
         toast.show();
+        String answer = card.getAnswer();
+        textView.setText(answer);
         return true;
     }
 
@@ -131,6 +146,7 @@ public class ReviewActivity extends ActionBarActivity implements
     public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
         final int SWIPE_THRESHOLD = 100;
         final int SWIPE_VELOCITY_THRESHOLD = 100;
+        max = dbAdapter.getNumCards();
 
             float diffY = e2.getY() - e1.getY();
             float diffX = e2.getX() - e1.getX();
@@ -139,10 +155,26 @@ public class ReviewActivity extends ActionBarActivity implements
                     if (diffX > 0) {
                         Toast toast = Toast.makeText(getApplicationContext(), "Right", Toast.LENGTH_SHORT);
                         toast.show();
+                        if (counter > 1) {
+                            counter--;
+                        }
+                        else {
+                            counter = max;
+                        }
                     } else {
                         Toast toast = Toast.makeText(getApplicationContext(), "Left", Toast.LENGTH_SHORT);
                         toast.show();
+                        if(counter < max) {
+                            counter++;
+                        }
+                        else {
+                            counter = 1;
+                        }
                     }
+                    card = dbAdapter.getCardItem(counter);
+                    String question = card.getQuestion();
+                    textView.setText(question);
+
                 }
             }
         return true;
