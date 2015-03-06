@@ -275,8 +275,11 @@ public class MainActivity extends ActionBarActivity {
                             adapter.add(newSubject);
                             if (subjects.size()>=0) {
                                 subjectSpinner.setVisibility(View.VISIBLE);
+                                noSubjectTextView.setText("");
                                 noSubjectTextView.setVisibility(View.INVISIBLE);
                             }
+                            //Set subjetspinner to most recently added item!
+                            subjectSpinner.setSelection(adapter.getCount());
 
                         }
                     });
