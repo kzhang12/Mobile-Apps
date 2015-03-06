@@ -19,7 +19,10 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.ArrayList;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -116,17 +119,39 @@ public class MainActivity extends ActionBarActivity {
 
     public static class ReviewFragment extends Fragment {
         private Spinner subjectSpinner;
+        private TextView noSubjectTextView;
         private View myFragmentView;
         private Button startButton;
+        private ArrayList<String> subjects;
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             // Inflate the layout resource that'll be returned
             myFragmentView = inflater.inflate(R.layout.fragment_review, container, false);
             subjectSpinner = (Spinner) myFragmentView.findViewById(R.id.review_subject_spinner);
-            // Create an ArrayAdapter using the string array and a default spinner layout
-            ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this.getActivity(),
-                    R.array.subjects_array, android.R.layout.simple_spinner_item);
+            noSubjectTextView =  (TextView) myFragmentView.findViewById(R.id.no_subject_review_textview);
+
+//            // Create an ArrayAdapter using the string array and a default spinner layout
+//            ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this.getActivity(),
+//                    R.array.subjects_array, android.R.layout.simple_spinner_item);
+
+            //Create ArrayAdapter
+            ArrayAdapter<CharSequence> adapter = new ArrayAdapter<CharSequence>(this.getActivity(),
+                    android.R.layout.simple_spinner_item);
+
+            subjects = (ArrayList<String>)dbAdapter.getSubjects();
+            if (subjects.size()==0) {
+                subjectSpinner.setVisibility(View.INVISIBLE);
+                noSubjectTextView.setText("No Subjects, Please add a card!");
+                noSubjectTextView.setVisibility(View.VISIBLE);
+            } else {
+                subjectSpinner.setVisibility(View.VISIBLE);
+                noSubjectTextView.setVisibility(View.INVISIBLE);
+                for(int i = 0; i < subjects.size(); i++) {
+                    adapter.add(subjects.get(i));
+                }
+            }
+            //subjectSpinner.setSelection(0);
             // Specify the layout to use when the list of choices appears
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             // Apply the adapter to the spinner
@@ -152,23 +177,45 @@ public class MainActivity extends ActionBarActivity {
 
     public static class InsertFragment extends Fragment {
         private Spinner subjectSpinner;
+        private TextView noSubjectTextView;
         private View myFragmentView;
         private EditText questionEditText;
         private EditText answerEditText;
         private Button insertButton;
         private Button subjectButton;
-        private View subjectView;
+        //private View subjectView;
         private EditText subjectEditText;
+        private ArrayList<String> subjects;
+        ArrayAdapter<CharSequence> adapter;
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             // Inflate the layout resource that'll be returned
             myFragmentView =  inflater.inflate(R.layout.fragment_insert, container, false);
-            subjectView =  inflater.inflate(R.layout.subject_alert, container, false);
+            //View subjectView =  inflater.inflate(R.layout.subject_alert, container, false);
             subjectSpinner = (Spinner) myFragmentView.findViewById(R.id.insert_subject_spinner);
-            // Create an ArrayAdapter using the string array and a default spinner layout
-            ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this.getActivity(),
-                    R.array.subjects_array, android.R.layout.simple_spinner_item);
+            noSubjectTextView =  (TextView) myFragmentView.findViewById(R.id.no_subject_insert_textview);
+//            // Create an ArrayAdapter using the string array and a default spinner layout
+//            ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this.getActivity(),
+//                    R.array.subjects_array, android.R.layout.simple_spinner_item);
+
+            //Create ArrayAdapter
+            adapter = new ArrayAdapter<CharSequence>(this.getActivity(),
+                    android.R.layout.simple_spinner_item);
+
+            subjects = (ArrayList<String>)dbAdapter.getSubjects();
+            if (subjects.size()==0) {
+                subjectSpinner.setVisibility(View.INVISIBLE);
+                noSubjectTextView.setText("No Subjects, Please add a card!");
+                noSubjectTextView.setVisibility(View.VISIBLE);
+            } else {
+                subjectSpinner.setVisibility(View.VISIBLE);
+                noSubjectTextView.setVisibility(View.INVISIBLE);
+                for(int i = 0; i < subjects.size(); i++) {
+                    adapter.add(subjects.get(i));
+                }
+            }
+
             // Specify the layout to use when the list of choices appears
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             // Apply the adapter to the spinner
@@ -178,7 +225,6 @@ public class MainActivity extends ActionBarActivity {
             answerEditText = (EditText) myFragmentView.findViewById(R.id.answer_editText);
             insertButton = (Button) myFragmentView.findViewById(R.id.insert_button);
             subjectButton = (Button) myFragmentView.findViewById(R.id.add_subject_button);
-            subjectEditText= (EditText) subjectView.findViewById(R.id.subject_editText);
 
             insertButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -194,6 +240,10 @@ public class MainActivity extends ActionBarActivity {
             subjectButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                    View subjectView =  inflater.inflate(R.layout.subject_alert, null);
+                    subjectEditText= (EditText) subjectView.findViewById(R.id.subject_editText);
+
                     //Make a builder for the alert dialog
                     AlertDialog.Builder mBuilder = new AlertDialog.Builder(getActivity());
                     mBuilder.setTitle("Add a new subject");
@@ -206,6 +256,11 @@ public class MainActivity extends ActionBarActivity {
                             //TODO: Need to add new subject to the database
 
                             //TODO: Need to notify spinner adapter that the data set has changed / repopulate the spinner
+                            adapter.add(newSubject);
+                            if (subjects.size()>=0) {
+                                subjectSpinner.setVisibility(View.VISIBLE);
+                                noSubjectTextView.setVisibility(View.INVISIBLE);
+                            }
 
                         }
                     });

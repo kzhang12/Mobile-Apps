@@ -15,6 +15,12 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center">
         </Spinner>
+        <TextView
+            android:id="@+id/no_subject_insert_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="invisible"/>
         <Button
             android:id="@+id/add_subject_button"
             android:layout_width="wrap_content"

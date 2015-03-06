@@ -16,6 +16,12 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center">
         </Spinner>
+        <TextView
+            android:id="@+id/no_subject_review_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="invisible"/>
     </LinearLayout>
     <LinearLayout
         android:layout_width="wrap_content"
