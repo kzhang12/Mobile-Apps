@@ -84,9 +84,7 @@ public class FlashdbAdapter {
         List<String> result = new ArrayList<String>();
         /*while (!cursor.isAfterLast()) {
             int col = cursor.getColumnIndex(FLASH_SUBJECT);
-            Log.w("col", Integer.toString(col));
             String temp = cursor.getString(col);
-            Log.w("string", temp);
             result.add(temp);
             cursor.moveToNext();
         }*/
@@ -100,6 +98,34 @@ public class FlashdbAdapter {
         }
         cursor.close();
         return result;
+    }
+
+    public List<CardItem> getSpecificCards(String sub) throws SQLException {
+        Cursor cursor = db.query(true, FLASH_TABLE, FLASH_COLS, FLASH_SUBJECT+"=\""+sub+"\"", null, null, null, null, null);
+        //TODO: Account for when there are no cards in the subject
+        if ((cursor.getCount() == 0) || !cursor.moveToFirst()) {
+            throw new SQLException("No course items found for subject: " + sub);
+            //return null;
+        }
+        List<CardItem> result = new ArrayList<CardItem>();
+        cursor.moveToFirst();
+        for (int i = 0; i < cursor.getCount(); i++) {
+            CardItem temp = new CardItem(cursor.getString(1), cursor.getString(2), cursor.getString(3));
+            result.add(temp);
+            cursor.moveToNext();
+        }
+        cursor.close();
+        return result;
+    }
+
+    public boolean isEmpty() {
+        Cursor cursor = db.query(true, FLASH_TABLE, FLASH_COLS, FLASH_ID, null, null, null, null, null);
+        int num = cursor.getCount();
+        return num == 0;
+    }
+
+    public long removeCard(String ques) {
+        return db.delete(FLASH_TABLE, FLASH_QUESTION+"=\""+ques+"\"", null);
     }
 
     private static class FlashdbHelper extends SQLiteOpenHelper {

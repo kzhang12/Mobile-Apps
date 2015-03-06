@@ -1,6 +1,7 @@
 package bkim54kzhang12.flashboard;
 
 import android.app.ActionBar;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -8,8 +9,11 @@ import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -30,12 +34,17 @@ public class MainActivity extends ActionBarActivity {
 
     protected static FlashdbAdapter dbAdapter;
 
+    SharedPreferences myPrefs;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         reviewButton = (Button) findViewById(R.id.reviewButton);
         insertButton = (Button) findViewById(R.id.insertButton);
+
+        Context context = getApplicationContext();
+        myPrefs = PreferenceManager.getDefaultSharedPreferences(context);
 
         //setup DB
         dbAdapter = new FlashdbAdapter(this);
@@ -136,8 +145,15 @@ public class MainActivity extends ActionBarActivity {
             startButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(getActivity(), ReviewActivity.class);
-                    startActivity(intent);
+                    if(dbAdapter.isEmpty()) {
+                        Toast toast = Toast.makeText(getActivity().getApplication(), "Please insert at least 1 card", Toast.LENGTH_SHORT);
+                        toast.show();
+                    }
+                    else {
+                        Intent intent = new Intent(getActivity(), ReviewActivity.class);
+                        intent.putExtra("subject", subjectSpinner.getSelectedItem().toString());
+                        startActivity(intent);
+                    }
                 }
             });
             return myFragmentView;
@@ -185,7 +201,7 @@ public class MainActivity extends ActionBarActivity {
                 public void onClick(View v) {
                     String question = questionEditText.getText().toString();
                     String answer = answerEditText.getText().toString();
-                    dbAdapter.insertCard(new CardItem("science", question, answer));
+                    dbAdapter.insertCard(new CardItem(subjectSpinner.getSelectedItem().toString(), question, answer));
                     Toast toast = Toast.makeText(getActivity(), "Added New Card!", Toast.LENGTH_SHORT);
                     toast.show();
                 }
