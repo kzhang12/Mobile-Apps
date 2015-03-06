@@ -1,5 +1,6 @@
 package bkim54kzhang12.flashboard;
 
+import android.content.Intent;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v7.app.ActionBarActivity;
@@ -27,6 +28,7 @@ public class ReviewActivity extends ActionBarActivity implements
     private int counter;
     private int max;
     private CheckBox randomizeCheckbox;
+    private List<CardItem> cards;
 
     private static final String DEBUG_TAG = "Gestures";
     private GestureDetectorCompat mDetector;
@@ -49,17 +51,22 @@ public class ReviewActivity extends ActionBarActivity implements
         //setup DB
         dbAdapter = new FlashdbAdapter(this);
         dbAdapter.open();
-        counter = 1;
+        counter = 0;
 
+        Intent intent = getIntent();
+        String subject = intent.getExtras().getString("subject");
         textView = (TextView) findViewById(R.id.review_textView);
-
-        card = dbAdapter.getCardItem(counter);
+        try {
+            cards = dbAdapter.getSpecificCards(subject);
+            //Toast.makeText(getApplicationContext(), "There are no cards for this subject", Toast.LENGTH_SHORT).show();
+        }
+        catch(Exception SQLException) {
+            throw SQLException;
+        }
+        max = cards.size() - 1;
+        card = cards.get(counter);
         String question = card.getQuestion();
         textView.setText(question);
-
-        List<String> temp = dbAdapter.getSubjects();
-        textView.setText(temp.toString());
-
     }
 
     @Override
@@ -80,11 +87,14 @@ public class ReviewActivity extends ActionBarActivity implements
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch(item.getItemId()) {
+            case R.id.action_settings:
+                return true;
+            case R.id.action_trashcan:
+                Toast.makeText(this, "You deleted this card", Toast.LENGTH_SHORT).show();
+                String q = card.getQuestion();
+                String a = card.getAnswer();
+                dbAdapter.removeCard(q);
         }
 
         return super.onOptionsItemSelected(item);
@@ -146,7 +156,6 @@ public class ReviewActivity extends ActionBarActivity implements
     public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
         final int SWIPE_THRESHOLD = 100;
         final int SWIPE_VELOCITY_THRESHOLD = 100;
-        max = dbAdapter.getNumCards();
 
             float diffY = e2.getY() - e1.getY();
             float diffX = e2.getX() - e1.getX();
@@ -155,7 +164,7 @@ public class ReviewActivity extends ActionBarActivity implements
                     if (diffX > 0) {
                         Toast toast = Toast.makeText(getApplicationContext(), "Right", Toast.LENGTH_SHORT);
                         toast.show();
-                        if (counter > 1) {
+                        if (counter > 0) {
                             counter--;
                         }
                         else {
@@ -168,10 +177,10 @@ public class ReviewActivity extends ActionBarActivity implements
                             counter++;
                         }
                         else {
-                            counter = 1;
+                            counter = 0;
                         }
                     }
-                    card = dbAdapter.getCardItem(counter);
+                    card = cards.get(counter);
                     String question = card.getQuestion();
                     textView.setText(question);
 
