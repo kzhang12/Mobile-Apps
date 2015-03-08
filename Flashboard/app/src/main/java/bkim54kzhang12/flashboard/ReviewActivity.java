@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.List;
+import java.util.Random;
 
 
 public class ReviewActivity extends ActionBarActivity implements
@@ -27,10 +28,13 @@ public class ReviewActivity extends ActionBarActivity implements
     private CardItem card;
     private int counter;
     private int max;
-    private CheckBox randomizeCheckbox;
+    private int min = 0;
     private List<CardItem> cards;
     private String subject;
     private boolean emptyDeck;
+    private boolean random;
+    private Random randGen;
+    private int randomNum;
 
     private static final String DEBUG_TAG = "Gestures";
     private GestureDetectorCompat mDetector;
@@ -39,9 +43,6 @@ public class ReviewActivity extends ActionBarActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_review);
-
-        randomizeCheckbox = (CheckBox) findViewById(R.id.random_checkbox);
-
         // Instantiate the gesture detector with the
         // application context and an implementation of
         // GestureDetector.OnGestureListener
@@ -55,8 +56,12 @@ public class ReviewActivity extends ActionBarActivity implements
         dbAdapter.open();
         counter = 0;
 
+        //setup random number bullshit
+        randGen = new Random();
+
         Intent intent = getIntent();
-        subject = intent.getExtras().getString("subject");
+        subject = intent.getExtras().getString(MainActivity.EXTRA_SUBJECT);
+        random = intent.getExtras().getBoolean(MainActivity.EXTRA_RANDOM);
         textView = (TextView) findViewById(R.id.review_textView);
         try {
             cards = dbAdapter.getSpecificCards(subject);
@@ -66,6 +71,13 @@ public class ReviewActivity extends ActionBarActivity implements
             throw SQLException;
         }
         max = cards.size() - 1;
+        if(random) {
+            // nextInt is normally exclusive of the top value,
+            // so add 1 to make it inclusive
+            randomNum = randGen.nextInt((max - min) + 1) + min;
+            counter = randomNum;
+        }
+        //counter is 0 otherwise.
         card = cards.get(counter);
         String question = card.getQuestion();
         textView.setText(question);
@@ -94,6 +106,10 @@ public class ReviewActivity extends ActionBarActivity implements
             case R.id.action_settings:
                 return true;
             case R.id.action_trashcan:
+                if(emptyDeck) {
+                    Toast.makeText(this, "No more cards left!", Toast.LENGTH_SHORT).show();
+                    return super.onOptionsItemSelected(item);
+                }
                 Toast.makeText(this, "You deleted this card", Toast.LENGTH_SHORT).show();
                 String q = card.getQuestion();
                 String a = card.getAnswer();
@@ -102,7 +118,7 @@ public class ReviewActivity extends ActionBarActivity implements
                 //Reset cards after deleting a card
                 if (cards.size() == 1) {
                     //nothing left in deck after deleted this card
-                    textView.setText("THere are no more Questions in this deck");
+                    textView.setText("There are no more questions in this deck");
                     emptyDeck = true;
                 } else {
                     try {
@@ -113,7 +129,7 @@ public class ReviewActivity extends ActionBarActivity implements
                         throw SQLException;
                     }
                     max = cards.size() - 1;
-                    card = cards.get(counter);
+                    card = cards.get(0);
                     String question = card.getQuestion();
                     textView.setText(question);
                 }
@@ -188,11 +204,20 @@ public class ReviewActivity extends ActionBarActivity implements
                     if (diffX > 0) {
                         Toast toast = Toast.makeText(getApplicationContext(), "Right", Toast.LENGTH_SHORT);
                         toast.show();
-                        if (counter > 0) {
-                            counter--;
+                        if (random) {
+                        // nextInt is normally exclusive of the top value,
+                        // so add 1 to make it inclusive
+                            do {
+                                randomNum = randGen.nextInt((max - min) + 1) + min;
+                            } while (counter == randomNum); //keep generating until there different
+                            counter = randomNum;
                         }
-                        else {
-                            counter = max;
+                        else { //else not random
+                            if (counter > 0) {
+                                counter--;
+                            } else {
+                                counter = max;
+                            }
                         }
                     } else {
                         Toast toast = Toast.makeText(getApplicationContext(), "Left", Toast.LENGTH_SHORT);
@@ -204,6 +229,8 @@ public class ReviewActivity extends ActionBarActivity implements
                             counter = 0;
                         }
                     }
+                    //Toast toast = Toast.makeText(getApplicationContext(), counter+":"+randomNum, Toast.LENGTH_SHORT);
+                    //toast.show();
                     card = cards.get(counter);
                     String question = card.getQuestion();
                     textView.setText(question);

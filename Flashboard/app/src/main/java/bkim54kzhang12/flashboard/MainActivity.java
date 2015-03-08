@@ -21,6 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -30,6 +31,9 @@ import java.util.ArrayList;
 
 
 public class MainActivity extends ActionBarActivity {
+    public final static String EXTRA_RANDOM = "bkim54kzhang12.flashboard.RANDOM";
+    public final static String EXTRA_SUBJECT = "bkim54kzhang12.flashboard.SUBJECT";
+
     private FragmentManager fragmentManager;
     private FragmentTransaction fragmentTransaction;
     private Button reviewButton;
@@ -132,6 +136,7 @@ public class MainActivity extends ActionBarActivity {
         private View myFragmentView;
         private Button startButton;
         private ArrayList<String> subjects;
+        private CheckBox randomCheckBox;
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -139,7 +144,7 @@ public class MainActivity extends ActionBarActivity {
             myFragmentView = inflater.inflate(R.layout.fragment_review, container, false);
             subjectSpinner = (Spinner) myFragmentView.findViewById(R.id.review_subject_spinner);
             noSubjectTextView =  (TextView) myFragmentView.findViewById(R.id.no_subject_review_textview);
-
+            randomCheckBox = (CheckBox) myFragmentView.findViewById(R.id.random_checkbox);
 //            // Create an ArrayAdapter using the string array and a default spinner layout
 //            ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this.getActivity(),
 //                    R.array.subjects_array, android.R.layout.simple_spinner_item);
@@ -175,8 +180,11 @@ public class MainActivity extends ActionBarActivity {
                         toast.show();
                     }
                     else {
+
                         Intent intent = new Intent(getActivity(), ReviewActivity.class);
-                        intent.putExtra("subject", subjectSpinner.getSelectedItem().toString());
+                        intent.putExtra(EXTRA_SUBJECT, subjectSpinner.getSelectedItem().toString());
+                        intent.putExtra(EXTRA_RANDOM, randomCheckBox.isChecked());
+
                         startActivity(intent);
                     }
                 }
