@@ -29,6 +29,8 @@ public class ReviewActivity extends ActionBarActivity implements
     private int max;
     private CheckBox randomizeCheckbox;
     private List<CardItem> cards;
+    private String subject;
+    private boolean emptyDeck;
 
     private static final String DEBUG_TAG = "Gestures";
     private GestureDetectorCompat mDetector;
@@ -54,7 +56,7 @@ public class ReviewActivity extends ActionBarActivity implements
         counter = 0;
 
         Intent intent = getIntent();
-        String subject = intent.getExtras().getString("subject");
+        subject = intent.getExtras().getString("subject");
         textView = (TextView) findViewById(R.id.review_textView);
         try {
             cards = dbAdapter.getSpecificCards(subject);
@@ -67,6 +69,7 @@ public class ReviewActivity extends ActionBarActivity implements
         card = cards.get(counter);
         String question = card.getQuestion();
         textView.setText(question);
+        emptyDeck = false;
     }
 
     @Override
@@ -95,6 +98,25 @@ public class ReviewActivity extends ActionBarActivity implements
                 String q = card.getQuestion();
                 String a = card.getAnswer();
                 dbAdapter.removeCard(q);
+
+                //Reset cards after deleting a card
+                if (cards.size() == 1) {
+                    //nothing left in deck after deleted this card
+                    textView.setText("THere are no more Questions in this deck");
+                    emptyDeck = true;
+                } else {
+                    try {
+                        cards = dbAdapter.getSpecificCards(subject);
+                        //Toast.makeText(getApplicationContext(), "There are no cards for this subject", Toast.LENGTH_SHORT).show();
+                    }
+                    catch(Exception SQLException) {
+                        throw SQLException;
+                    }
+                    max = cards.size() - 1;
+                    card = cards.get(counter);
+                    String question = card.getQuestion();
+                    textView.setText(question);
+                }
         }
 
         return super.onOptionsItemSelected(item);
@@ -159,6 +181,8 @@ public class ReviewActivity extends ActionBarActivity implements
 
             float diffY = e2.getY() - e1.getY();
             float diffX = e2.getX() - e1.getX();
+            if (emptyDeck)
+                return true;
             if (Math.abs(diffX) > Math.abs(diffY)) {
                 if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
                     if (diffX > 0) {
