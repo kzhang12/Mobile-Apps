@@ -2,18 +2,29 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
-
+    android:orientation="vertical"
+    android:layout_gravity="center">
+    <!--BS textview to force question/answer to be in middle of screen -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"/>
     <TextView
         android:id="@+id/review_textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="#FFFFFF"
+        android:textStyle="italic"
+        android:textSize="40sp"
+        android:textAlignment="center"
+        android:gravity="center"
         android:layout_weight="1"
         android:layout_gravity="center"/>
     <ImageView
+        android:id="@+id/arrow_imageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:src="@drawable/arrows"
+        android:src="@drawable/arrowswhite"
         android:layout_gravity="center"/>
 </LinearLayout>

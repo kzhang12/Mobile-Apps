@@ -10,6 +10,12 @@
         android:orientation="horizontal"
         android:layout_weight="1"
         android:layout_gravity="center">
+        <TextView
+            android:id="@+id/select_subject_textview"
+            android:textStyle="italic|bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"/>
         <Spinner
             android:id="@+id/review_subject_spinner"
             android:layout_width="wrap_content"
@@ -34,6 +40,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/randomize"
+            android:textStyle="italic|bold"
             android:layout_gravity="center"/>
     </LinearLayout>
     <LinearLayout
@@ -42,11 +49,13 @@
         android:orientation="horizontal"
         android:layout_gravity="center"
         android:layout_weight="1">
-        <Button
+
+        <ImageButton
             android:id="@+id/start_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/start"
+            android:src="@drawable/startbutton"
+            style="?android:attr/borderlessButtonStyle"
             android:layout_gravity="center"/>
     </LinearLayout>
 </LinearLayout>

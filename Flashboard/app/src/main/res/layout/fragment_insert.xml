@@ -21,11 +21,13 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:visibility="invisible"/>
+
         <Button
             android:id="@+id/add_subject_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/add"
+            android:textStyle="bold"
             android:layout_gravity="center"/>
     </LinearLayout>
     
@@ -59,11 +61,14 @@
         android:orientation="horizontal"
         android:layout_gravity="center"
         android:layout_weight="1">
-        <Button
+
+        <ImageButton
             android:id="@+id/insert_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/insert"
+            android:src="@drawable/insertbutton"
+            style="?android:attr/borderlessButtonStyle"
             android:layout_gravity="center"/>
+
     </LinearLayout>
 </LinearLayout>

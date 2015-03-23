@@ -1,7 +1,5 @@
 package bkim54kzhang12.flashboard;
 
-import android.app.ActionBar;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -23,6 +21,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -132,9 +131,10 @@ public class MainActivity extends ActionBarActivity {
 
     public static class ReviewFragment extends Fragment {
         private Spinner subjectSpinner;
+        private TextView selectSubjectTextView;
         private TextView noSubjectTextView;
         private View myFragmentView;
-        private Button startButton;
+        private ImageButton startButton;
         private ArrayList<String> subjects;
         private CheckBox randomCheckBox;
 
@@ -143,6 +143,7 @@ public class MainActivity extends ActionBarActivity {
             // Inflate the layout resource that'll be returned
             myFragmentView = inflater.inflate(R.layout.fragment_review, container, false);
             subjectSpinner = (Spinner) myFragmentView.findViewById(R.id.review_subject_spinner);
+            selectSubjectTextView = (TextView) myFragmentView.findViewById(R.id.select_subject_textview);
             noSubjectTextView =  (TextView) myFragmentView.findViewById(R.id.no_subject_review_textview);
             randomCheckBox = (CheckBox) myFragmentView.findViewById(R.id.random_checkbox);
 //            // Create an ArrayAdapter using the string array and a default spinner layout
@@ -156,9 +157,12 @@ public class MainActivity extends ActionBarActivity {
             subjects = (ArrayList<String>)dbAdapter.getSubjects();
             if (subjects.size()==0) {
                 subjectSpinner.setVisibility(View.INVISIBLE);
+                selectSubjectTextView.setVisibility(View.INVISIBLE);
                 noSubjectTextView.setText("No Subjects, Please add a card!");
                 noSubjectTextView.setVisibility(View.VISIBLE);
             } else {
+                selectSubjectTextView.setVisibility(View.VISIBLE);
+                selectSubjectTextView.setText("Subject:");
                 subjectSpinner.setVisibility(View.VISIBLE);
                 noSubjectTextView.setVisibility(View.INVISIBLE);
                 for(int i = 0; i < subjects.size(); i++) {
@@ -171,7 +175,7 @@ public class MainActivity extends ActionBarActivity {
             // Apply the adapter to the spinner
             subjectSpinner.setAdapter(adapter);
 
-            startButton = (Button) myFragmentView.findViewById(R.id.start_button);
+            startButton = (ImageButton) myFragmentView.findViewById(R.id.start_button);
             startButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -205,7 +209,7 @@ public class MainActivity extends ActionBarActivity {
         private View myFragmentView;
         private EditText questionEditText;
         private EditText answerEditText;
-        private Button insertButton;
+        private ImageButton insertButton;
         private Button subjectButton;
         //private View subjectView;
         private EditText subjectEditText;
@@ -247,7 +251,7 @@ public class MainActivity extends ActionBarActivity {
 
             questionEditText = (EditText) myFragmentView.findViewById(R.id.question_editText);
             answerEditText = (EditText) myFragmentView.findViewById(R.id.answer_editText);
-            insertButton = (Button) myFragmentView.findViewById(R.id.insert_button);
+            insertButton = (ImageButton) myFragmentView.findViewById(R.id.insert_button);
             subjectButton = (Button) myFragmentView.findViewById(R.id.add_subject_button);
 
             insertButton.setOnClickListener(new View.OnClickListener() {
@@ -255,8 +259,16 @@ public class MainActivity extends ActionBarActivity {
                 public void onClick(View v) {
                     String question = questionEditText.getText().toString();
                     String answer = answerEditText.getText().toString();
-                    dbAdapter.insertCard(new CardItem(subjectSpinner.getSelectedItem().toString(), question, answer));
-                    Toast toast = Toast.makeText(getActivity(), "Added New Card!", Toast.LENGTH_SHORT);
+                    Toast toast;
+                    if(subjectSpinner.getVisibility() == View.INVISIBLE || question.equals("") || answer.equals("")) {
+                        toast = Toast.makeText(getActivity(), "Please Complete Fields", Toast.LENGTH_SHORT);
+                    } else {
+                        String subject = subjectSpinner.getSelectedItem().toString();
+                        dbAdapter.insertCard(new CardItem(subject, question, answer));
+                        toast = Toast.makeText(getActivity(), "Added New Card!", Toast.LENGTH_SHORT);
+                        questionEditText.setText("");
+                        answerEditText.setText("");
+                    }
                     toast.show();
                 }
             });

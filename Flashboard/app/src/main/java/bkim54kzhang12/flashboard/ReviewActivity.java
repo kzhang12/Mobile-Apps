@@ -10,8 +10,10 @@ import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,7 +26,8 @@ public class ReviewActivity extends ActionBarActivity implements
         GestureDetector.OnDoubleTapListener {
 
     protected static FlashdbAdapter dbAdapter;
-    TextView textView;
+    private TextView q_a_textView;
+    private ImageView arrows_ImageView;
     private CardItem card;
     private int counter;
     private int max;
@@ -62,7 +65,8 @@ public class ReviewActivity extends ActionBarActivity implements
         Intent intent = getIntent();
         subject = intent.getExtras().getString(MainActivity.EXTRA_SUBJECT);
         random = intent.getExtras().getBoolean(MainActivity.EXTRA_RANDOM);
-        textView = (TextView) findViewById(R.id.review_textView);
+        q_a_textView = (TextView) findViewById(R.id.review_textView);
+        arrows_ImageView = (ImageView) findViewById(R.id.arrow_imageView);
         try {
             cards = dbAdapter.getSpecificCards(subject);
             //Toast.makeText(getApplicationContext(), "There are no cards for this subject", Toast.LENGTH_SHORT).show();
@@ -80,7 +84,7 @@ public class ReviewActivity extends ActionBarActivity implements
         //counter is 0 otherwise.
         card = cards.get(counter);
         String question = card.getQuestion();
-        textView.setText(question);
+        q_a_textView.setText(question);
         emptyDeck = false;
     }
 
@@ -118,8 +122,10 @@ public class ReviewActivity extends ActionBarActivity implements
                 //Reset cards after deleting a card
                 if (cards.size() == 1) {
                     //nothing left in deck after deleted this card
-                    textView.setText("There are no more questions in this deck");
+                    q_a_textView.setText("There are no more questions in this deck");
+                    arrows_ImageView.setVisibility(View.INVISIBLE);
                     emptyDeck = true;
+
                 } else {
                     try {
                         cards = dbAdapter.getSpecificCards(subject);
@@ -131,7 +137,7 @@ public class ReviewActivity extends ActionBarActivity implements
                     max = cards.size() - 1;
                     card = cards.get(0);
                     String question = card.getQuestion();
-                    textView.setText(question);
+                    q_a_textView.setText(question);
                 }
         }
 
@@ -147,10 +153,17 @@ public class ReviewActivity extends ActionBarActivity implements
 
     @Override
     public boolean onSingleTapConfirmed(MotionEvent e) {
-        Toast toast = Toast.makeText(getApplicationContext(), "Tapped", Toast.LENGTH_SHORT);
-        toast.show();
+        //Toast toast = Toast.makeText(getApplicationContext(), "Tapped", Toast.LENGTH_SHORT);
+        //toast.show();
+        String question = card.getQuestion();
         String answer = card.getAnswer();
-        textView.setText(answer);
+        if (!emptyDeck) {
+            if (q_a_textView.getText().toString().equals(question)) {
+                q_a_textView.setText(answer);
+            } else {
+                q_a_textView.setText(question);
+            }
+        }
         return true;
     }
 
@@ -202,8 +215,8 @@ public class ReviewActivity extends ActionBarActivity implements
             if (Math.abs(diffX) > Math.abs(diffY)) {
                 if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
                     if (diffX > 0) {
-                        Toast toast = Toast.makeText(getApplicationContext(), "Right", Toast.LENGTH_SHORT);
-                        toast.show();
+                        //Toast toast = Toast.makeText(getApplicationContext(), "Right", Toast.LENGTH_SHORT);
+                        //toast.show();
                         if (random) {
                         // nextInt is normally exclusive of the top value,
                         // so add 1 to make it inclusive
@@ -220,8 +233,8 @@ public class ReviewActivity extends ActionBarActivity implements
                             }
                         }
                     } else {
-                        Toast toast = Toast.makeText(getApplicationContext(), "Left", Toast.LENGTH_SHORT);
-                        toast.show();
+                        //Toast toast = Toast.makeText(getApplicationContext(), "Left", Toast.LENGTH_SHORT);
+                        //toast.show();
                         if(counter < max) {
                             counter++;
                         }
@@ -233,7 +246,7 @@ public class ReviewActivity extends ActionBarActivity implements
                     //toast.show();
                     card = cards.get(counter);
                     String question = card.getQuestion();
-                    textView.setText(question);
+                    q_a_textView.setText(question);
 
                 }
             }
