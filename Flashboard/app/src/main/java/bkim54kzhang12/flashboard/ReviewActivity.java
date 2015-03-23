@@ -233,13 +233,21 @@ public class ReviewActivity extends ActionBarActivity implements
                             }
                         }
                     } else {
-                        //Toast toast = Toast.makeText(getApplicationContext(), "Left", Toast.LENGTH_SHORT);
-                        //toast.show();
-                        if(counter < max) {
-                            counter++;
-                        }
-                        else {
-                            counter = 0;
+                        if (random) {
+                            // nextInt is normally exclusive of the top value,
+                            // so add 1 to make it inclusive
+                            do {
+                                randomNum = randGen.nextInt((max - min) + 1) + min;
+                            } while (counter == randomNum); //keep generating until there different
+                            counter = randomNum;
+                        } else {
+                            //Toast toast = Toast.makeText(getApplicationContext(), "Left", Toast.LENGTH_SHORT);
+                            //toast.show();
+                            if (counter < max) {
+                                counter++;
+                            } else {
+                                counter = 0;
+                            }
                         }
                     }
                     //Toast toast = Toast.makeText(getApplicationContext(), counter+":"+randomNum, Toast.LENGTH_SHORT);
