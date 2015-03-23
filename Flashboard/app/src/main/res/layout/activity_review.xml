@@ -6,9 +6,15 @@
     android:layout_gravity="center">
     <!--BS textview to force question/answer to be in middle of screen -->
     <TextView
+        android:id="@+id/qa_textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1"/>
+        android:textSize="20sp"
+        android:textColor="#FFFFFF"
+        android:textStyle="italic"
+        android:gravity="center"
+        android:layout_weight="1"
+        android:layout_gravity="center"/>
     <TextView
         android:id="@+id/review_textView"
         android:layout_width="wrap_content"

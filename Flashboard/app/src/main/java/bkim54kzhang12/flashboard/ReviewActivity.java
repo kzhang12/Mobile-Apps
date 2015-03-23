@@ -24,9 +24,11 @@ import java.util.Random;
 public class ReviewActivity extends ActionBarActivity implements
         GestureDetector.OnGestureListener,
         GestureDetector.OnDoubleTapListener {
-
+    private final String bkim54_kzhang12_QUESTION = "Question";
+    private final String bkim54_kzhang12_ANSWER = "Answer";
     protected static FlashdbAdapter dbAdapter;
     private TextView q_a_textView;
+    private TextView qaLabelTextView;
     private ImageView arrows_ImageView;
     private CardItem card;
     private int counter;
@@ -66,6 +68,7 @@ public class ReviewActivity extends ActionBarActivity implements
         subject = intent.getExtras().getString(MainActivity.EXTRA_SUBJECT);
         random = intent.getExtras().getBoolean(MainActivity.EXTRA_RANDOM);
         q_a_textView = (TextView) findViewById(R.id.review_textView);
+        qaLabelTextView = (TextView) findViewById(R.id.qa_textView);
         arrows_ImageView = (ImageView) findViewById(R.id.arrow_imageView);
         try {
             cards = dbAdapter.getSpecificCards(subject);
@@ -84,6 +87,7 @@ public class ReviewActivity extends ActionBarActivity implements
         //counter is 0 otherwise.
         card = cards.get(counter);
         String question = card.getQuestion();
+        qaLabelTextView.setText(bkim54_kzhang12_QUESTION);
         q_a_textView.setText(question);
         emptyDeck = false;
     }
@@ -124,6 +128,7 @@ public class ReviewActivity extends ActionBarActivity implements
                     //nothing left in deck after deleted this card
                     q_a_textView.setText("There are no more questions in this deck");
                     arrows_ImageView.setVisibility(View.INVISIBLE);
+                    qaLabelTextView.setVisibility(View.INVISIBLE);
                     emptyDeck = true;
 
                 } else {
@@ -160,8 +165,10 @@ public class ReviewActivity extends ActionBarActivity implements
         if (!emptyDeck) {
             if (q_a_textView.getText().toString().equals(question)) {
                 q_a_textView.setText(answer);
+                qaLabelTextView.setText(bkim54_kzhang12_ANSWER);
             } else {
                 q_a_textView.setText(question);
+                qaLabelTextView.setText(bkim54_kzhang12_QUESTION);
             }
         }
         return true;
@@ -255,7 +262,7 @@ public class ReviewActivity extends ActionBarActivity implements
                     card = cards.get(counter);
                     String question = card.getQuestion();
                     q_a_textView.setText(question);
-
+                    qaLabelTextView.setText(bkim54_kzhang12_QUESTION);
                 }
             }
         return true;
